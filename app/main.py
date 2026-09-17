@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
 from app.api.health import router as health_router
 from app.config import settings
 from app.logger import logger
+from app.api.database import router as db_router
 
 
 # FastAPI now recommends lifespan mechanism (instead of on_event())
@@ -31,3 +33,4 @@ app = FastAPI(title = settings.APP_NAME,
 
 # routed health APIs here
 app.include_router(health_router)
+app.include_router(db_router)

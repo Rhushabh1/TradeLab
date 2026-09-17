@@ -95,3 +95,26 @@ GET /
 
 DELETE /
 	204, 401, 403, 404, 409, 500
+
+### Steps
+
+initialise alembic once 
+$> alembic init alembic
+creates alembic folder
+
+create migration
+$> docker exec -it tradelab-api-1 alembic revision --autogenerate -m "create users table"
+run alembic inside API container/docker image, where db resolves correctly
+$> docker exec -it tradelab-api-1 alembic upgrade head
+now users table exists
+
+$> docker exec -it tradelab-api-1 alembic current
+$> docker exec -it tradelab-api-1 alembic history
+
+basic flow is 
+sqlalchemy models -> alembic revision --autogenerate -> alembic/versions/<migration>.py -> alembic upgrade head -> postgresql tables
+
+shutting down then restart docker image
+$> docker compose down
+$> docker compose build api
+$> docker compose up -d

@@ -9,9 +9,10 @@ class Settings(BaseSettings):
 	DEBUG : bool = True
 	HOST : str = "0.0.0.0"
 	PORT : int = 8000
-
 	# new pydantic v3 style
 	model_config = SettingsConfigDict(env_file = ".env")
+
+	DATABASE_URL: str
 
 
 settings = Settings()

@@ -5,3 +5,23 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    
+    depends_on:
+      - db
+    volumes: 
+      - .:/app
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tradelab
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
