@@ -41,10 +41,20 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- add postgresql, sqlalchemy, alembic
-- define 1st db model
-- wire dependency for db sessions
-- persist data
+- add middleware pipeline before auth
+why? because 
+FastAPI -> infra -> auth -> business logic
+every endpoint must automatically get -> logging, error handling, request ID, timing, etc.
+- separation of concerns (using service layers)
+- request tracing (for observability)
+- global exception handling
+
+- authservice + password hashing + JWT access tokens
+- post /register
+- post /login
+- userservice
+- admin/me endpoint
+
 
 ## Testing
 
@@ -102,19 +112,21 @@ initialise alembic once
 $> alembic init alembic
 creates alembic folder
 
+
 create migration
 $> docker exec -it tradelab-api-1 alembic revision --autogenerate -m "create users table"
 run alembic inside API container/docker image, where db resolves correctly
 $> docker exec -it tradelab-api-1 alembic upgrade head
 now users table exists
-
+check migration status
 $> docker exec -it tradelab-api-1 alembic current
 $> docker exec -it tradelab-api-1 alembic history
 
-basic flow is 
+
+basic flow is :
 sqlalchemy models -> alembic revision --autogenerate -> alembic/versions/<migration>.py -> alembic upgrade head -> postgresql tables
 
 shutting down then restart docker image
 $> docker compose down
-$> docker compose build api
-$> docker compose up -d
+$> docker compose build --no-cache api
+$> docker compose up

@@ -14,3 +14,7 @@ def test_health():
 def test_root():
 	response = client.get("/")
 	assert response.status_code == 200
+
+def test_error():
+	response = client.get("/error")
+	assert response.status_code == 400

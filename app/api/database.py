@@ -11,4 +11,6 @@ router = APIRouter(prefix = "/db")
 @router.get("/health")
 def db_health(db: Session = Depends(get_db)):
 	db.execute(text("SELECT 1"))
-	return {"database" : "connected"}
+	return {
+			"database": "connected"
+			}
