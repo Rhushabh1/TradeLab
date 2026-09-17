@@ -1,0 +1,97 @@
+# TradeLab
+
+AI Assisted Stock Research Platform
+
+## Features
+
+- FastAPI
+- Docker
+- Structured Logging
+
+## Run
+
+```bash
+cp .env.example .env
+```
+
+```bash
+docker compose up --build
+```
+
+Open 
+
+```
+http://localhost:8000/docs
+```
+or 
+```
+http://localhost:8000/health
+```
+
+Test (set pytest with current dir explicitly on PYTHONPATH)
+
+```bash
+$env:PYTHONPATH = "."
+pytest -vs tests/test_health.py
+```
+or 
+```bash
+python -m pytest -vs tests/test_health.py
+```
+
+## TODO
+
+- add postgresql, sqlalchemy, alembic
+- define 1st db model
+- wire dependency for db sessions
+- persist data
+
+## Testing
+
+Standard Status Codes -> 
+
+1xx -> WAIT/INFORMATIONAL
+
+2xx -> SUCCESS
+	200 - ok/exists (for successful GET)
+	201 - resource created (for successful POST)
+	202 - async accepted (for async processing)
+	203 - non-authoritative information
+	204 - no content (for successful DELETE)
+
+3xx -> REDIRECT/CACHE
+	301 - permanent
+	302 - temporary
+	304 - not modified
+	307 - temporary + preserve method
+	308 - permanent + preserve method
+
+4XX -> CLIENT/REQUEST PROBLEM
+	400 - bad request
+	401 - unauthenticated (who are you?)
+	403 - unauthorized (you're not allowed)
+	404 - resource absent (doesn't exist)
+	405 - wrong HTTP method
+	409 - state conflict/duplicate/concurrency conflict
+	412 - precondition failed
+	413 - payload too large
+	415 - wrong/unsupported content type
+	422 - validation failed
+	429 - rate limited (too many requests)
+
+5XX -> SERVER/DEPENDENCY PROBLEM
+	500 - server failure (i crashed)
+	502 - bad upstream response
+	503 - service unavailable/overloaded
+	504 - upstream timed out
+
+### API Testing Checklist
+
+POST /
+	200/201, 400, 401, 403, 409, 413, 415, 422, 429, 500, 503
+
+GET /
+	200, 401, 403, 404, 429, 500, 503
+
+DELETE /
+	204, 401, 403, 404, 409, 500
