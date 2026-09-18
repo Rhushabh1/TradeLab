@@ -41,11 +41,13 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- stock model
-- stock api
-- stockservice
-- yfinance
-- db persistence
+- portfolio model
+- buy and sell stock endpoint
+- list holdings
+- pnl calculation
+- reuse stockservice to fetch prices
+- basic txn history
+
 
 ## Testing
 
