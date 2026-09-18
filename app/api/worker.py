@@ -13,7 +13,7 @@ def queue_news_refresh():
 	task = refresh_news.delay()
 	return {
 			"task_id": task.id,
-			"status": "queued"
+			"status": "QUEUED"
 			}
 
 
@@ -22,7 +22,7 @@ def queue_stock_cache_refresh():
 	task = refresh_stock_cache.delay()
 	return {
 			"task_id": task.id,
-			"status": "queued"
+			"status": "QUEUED"
 			}
 
 
@@ -31,5 +31,5 @@ def queue_cache_cleanup():
 	task = cleanup_cache.delay()
 	return {
 			"task_id": task.id,
-			"status": "queued"
+			"status": "QUEUED"
 			}

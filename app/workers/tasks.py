@@ -67,6 +67,6 @@ def cleanup_cache(self):
 def refresh_news(self):
 	logger.info("Refreshing news...")
 	task_id = self.request.id 
-	result = {"status": "not implemented"}
+	result = {"status": "NOT_IMPLEMENTED"}
 	_record_history("refresh_news", task_id, "NOT_IMPLEMENTED", result)
 	return result

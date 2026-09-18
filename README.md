@@ -41,17 +41,19 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- periodic jobs
 - job registry
-- daily stock/news refresh
-- cache cleanup
 - scheduler health
 - execution history
 
-- no distributed locking, persistent jobs, job priorities, failure recovery, DLQs, etc. like I did in TaskForge
-- celery does -> automatic retries
-- redis + celery is sufficient if producer & consumer are part of same app (kafka only useful if events shared between independent services)
-
+- news ingestion
+- rag + ai chat + openai
+- backtesting engine
+- technical indicators
+- strategy builder
+- ai explanation of backtest results 
+- prompt evaluation
+- observability - prometheus
+- updated pytest suite for everything
 
 ## Testing
 

@@ -39,6 +39,6 @@ def run(job_id: str):
 	# scheduled functions are celery .delay callables
 	task = job.func()
 	return {
-			"status": "queued",
+			"status": "QUEUED",
 			"task_id": getattr(task, "id", None)
 			}
