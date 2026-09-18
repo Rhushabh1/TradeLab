@@ -23,12 +23,16 @@ class AuthService:
 		return user
 
 	def login(self, db: Session, email: str, password: str):
-		user = (db.query(User)
-				.filter(User.email == email)
-				.first())
+		user = self.get_user_by_email(db, email)
 		if not user:
 			raise TradeLabException("Invalid credential")
 		if not verify_password(password, user.password_hash):
 			raise TradeLabException("Invalid credentials")
 		# return JWT token (valid for 60 minutes)
 		return create_token(user.email)
+
+	# to get user_id from email (for services)
+	def get_user_by_email(self, db: Session, email: str):
+		return (db.query(User)
+				.filter(User.email == email)
+				.first())

@@ -18,6 +18,7 @@ def health():
 	# fetch from cache
 	return cache.get("ping")
 
+
 @router.post("/{key}")
 def save(key: str):
 	cache.set(key,
@@ -27,6 +28,7 @@ def save(key: str):
 	return {
 			"message": "stored"
 			}
+
 
 @router.get("/{key}")
 def load(key: str):

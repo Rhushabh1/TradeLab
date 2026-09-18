@@ -41,12 +41,13 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- portfolio model
-- buy and sell stock endpoint
-- list holdings
-- pnl calculation
-- reuse stockservice to fetch prices
-- basic txn history
+- scheduler (backend engg starts beyond CRUD)
+- periodic jobs
+- job registry
+- daily stock/news refresh
+- cache cleanup
+- scheduler health
+- execution history
 
 
 ## Testing
@@ -144,3 +145,14 @@ $> docker compose up -d --build api
 
 $> forces a fresh build (avoid for routine iterations)
 docker compose build --no-cache api
+
+
+Authorization flow:
+POST /auth/login
+JWT access token generated
+Swagger UI Authorize
+GET /auth/me
+Authorization: Bearer + token
+HTTPBearer extracts token
+jwt.decode() validates token
+payload["sub"] returns email

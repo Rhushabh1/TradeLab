@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -10,11 +8,12 @@ from app.schemas.auth import (RegisterRequest,
 								LoginRequest, 
 								TokenResponse)
 from app.services.auth_service import AuthService
+from app.api.dependencies import get_current_user
 
 
-router = APIRouter(prefix = "/auth")
+router = APIRouter(prefix = "/auth",
+					tags = ["Auth"])
 service = AuthService()
-security = HTTPBearer()
 
 
 @router.post("/register")
@@ -26,9 +25,11 @@ def register(request: RegisterRequest,
 			}
 
 
+# paste this token in "Authorize" Swagger UI
 @router.post("/login", response_model = TokenResponse)
 def login(request: LoginRequest,
 			db: Session = Depends(get_db)):
+	# JWT access token generated
 	token = service.login(db, request.email, request.password)
 	return {
 			"access_token": token
@@ -36,12 +37,10 @@ def login(request: LoginRequest,
 
 
 # decode my JWT credentials as bearer
-# usually replaced by get_current_user() dependency & load user from db
+# with HTTPBearer security scheme, swagger UI prompts for access token and attach it to protected requests
 @router.get("/me")
-def me(credentials: HTTPAuthorizationCredentials = Depends(security)):
-	payload = jwt.decode(credentials.credentials,
-						settings.JWT_SECRET,
-						algorithms = [settings.JWT_ALGORITHM])
+def me(user: User = Depends(get_current_user)):
 	return {
-			"email": payload["sub"]
+			"id": user.id,
+			"email": user.email
 			}

@@ -13,6 +13,7 @@ def health():
 			"status": "healthy"
 			}
 
+
 # homepage routing
 @router.get("/")
 def root():
@@ -20,6 +21,7 @@ def root():
 			"application": "TradeLab",
 			"message": "Welcome to TradeLab API"
 			}
+
 
 @router.get("/error")
 def error():
