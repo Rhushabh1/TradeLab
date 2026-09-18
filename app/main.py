@@ -13,6 +13,8 @@ from app.api.auth import router as auth_router
 from app.api.cache import router as cache_router
 from app.api.stocks import router as stock_router
 from app.api.portfolio import router as portfolio_router
+from app.scheduler.scheduler import scheduler
+from app.api.scheduler import router as scheduler_router
 
 
 # FastAPI now recommends lifespan mechanism (instead of on_event())
@@ -20,9 +22,11 @@ from app.api.portfolio import router as portfolio_router
 async def lifespan(app: FastAPI):
 	# startup
 	logger.info("Application starting...")
+	scheduler.start()
 	yield
 	# shutdown
 	logger.info("Application shutting down...")
+	scheduler.shutdown()
 
 
 # main app with APIs
@@ -46,6 +50,7 @@ app.include_router(auth_router)
 app.include_router(cache_router)
 app.include_router(stock_router)
 app.include_router(portfolio_router)
+app.include_router(scheduler_router)
 
 # register middleware
 app.add_middleware(RequestMiddleware)

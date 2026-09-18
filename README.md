@@ -41,13 +41,14 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- scheduler (backend engg starts beyond CRUD)
 - periodic jobs
 - job registry
 - daily stock/news refresh
 - cache cleanup
 - scheduler health
 - execution history
+
+- no distributed locking, retries, persistent jobs, job priorities, failure recovery, DLQs, etc. like I did in TaskForge
 
 
 ## Testing
