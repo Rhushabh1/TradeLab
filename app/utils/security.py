@@ -10,6 +10,7 @@ pwd_context = CryptContext(schemes = ["bcrypt"],
 
 
 # helper functions for auth + password hashing & verification
+# password hashing with bcrypt
 def hash_password(password: str) -> str:
 	return pwd_context.hash(password)
 
@@ -17,6 +18,7 @@ def verify_password(password: str, hashed: str) -> bool:
 	return pwd_context.verify(password, hashed)
 
 # returns JWT tokens (valid for 60 minutes)
+# JWT-based stateless authentication
 def create_token(email: str) -> str:
 	payload = {
 		"sub": email,

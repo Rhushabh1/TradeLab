@@ -41,20 +41,11 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- add middleware pipeline before auth
-why? because 
-FastAPI -> infra -> auth -> business logic
-every endpoint must automatically get -> logging, error handling, request ID, timing, etc.
-- separation of concerns (using service layers)
-- request tracing (for observability)
-- global exception handling
-
-- authservice + password hashing + JWT access tokens
-- post /register
-- post /login
-- userservice
-- admin/me endpoint
-- no RBAC, OAuth, refresh token, etc. (simple and tiny)
+- stock model
+- stock api
+- stockservice
+- yfinance
+- db persistence
 
 ## Testing
 

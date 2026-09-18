@@ -18,5 +18,7 @@ class Settings(BaseSettings):
 	JWT_ALGORITHM : str = "HS256"
 	TOKEN_EXPIRE_MINUTES : int = 60
 
+	REDIS_URL : str
+
 
 settings = Settings()

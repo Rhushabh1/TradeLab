@@ -8,6 +8,7 @@ from app.core.exceptions import (TradeLabException)
 
 
 # only service layer can access the DB
+# business logic lives in a service layer
 class AuthService:
 	def register(self, db: Session, email: str, password: str):
 		exists = (db.query(User)
