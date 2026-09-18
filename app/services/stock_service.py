@@ -17,7 +17,7 @@ STOCK_CACHE_TTL_SECONDS = 600
 # reduced dependence on external APIs
 class StockService:
 	# Yahoo Finance -> fetch current stock metadata & usable market price
-	def _fetch_maret_data(self, ticker: str) -> dict:
+	def _fetch_market_data(self, ticker: str) -> dict:
 		info = yf.Ticker(ticker).info
 		price = info.get("currentPrice")
 		if price is None:
@@ -62,7 +62,7 @@ class StockService:
 			return data
 		# (3) fetch from yfinance -> add to db -> add to cache
 		try:
-			data = self._fetch_maret_data(ticker)
+			data = self._fetch_market_data(ticker)
 		except Exception as e:
 			logger.exception(f"Failed to fetch stock data for {ticker}")
 			raise TradeLabException(f"Unable to retrieve usable stock data for {ticker}") from e
@@ -94,7 +94,7 @@ class StockService:
 		for stock in stocks:
 			ticker = stock.ticker.upper()
 			try:
-				data = self._fetch_maret_data(ticker)
+				data = self._fetch_market_data(ticker)
 			except Exception as e:
 				logger.exception(f"Failed to refresh price for {ticker}")
 				failed_tickers.append(ticker)
@@ -116,3 +116,10 @@ class StockService:
 				"failed": len(failed_tickers),
 				"failed_tickers": failed_tickers
 				}
+
+
+	# return list of all tracked stocks
+	def tracked_tickers(self, db: Session) -> list:
+		return (db.query(Stock.ticker).
+				.distinct()
+				.all())

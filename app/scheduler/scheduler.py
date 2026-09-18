@@ -10,7 +10,7 @@ scheduler = BackgroundScheduler()
 
 # scheduler no longer executes work -> it dispatches work to celery
 # .delay is a shorcut to send it to task manager
-# runs every 30 minutes
+# runs every 5 minutes
 scheduler.add_job(func = refresh_stock_cache.delay, 
 				trigger = "interval",
 				minutes = 5, 
@@ -31,4 +31,12 @@ scheduler.add_job(func = cleanup_cache.delay,
 				coalesce = True,
 				misfire_grace_time = 3600)
 
-# TODO - add news ingestion too
+# runs every 5 minutes
+scheduler.add_job(func = refresh_news.delay, 
+				trigger = "interval",
+				minutes = 5, 
+				id = "refresh_news",
+				name = "Refresh news and cache",
+				replace_existing = True,
+				coalesce = True,
+				misfire_grace_time = 3600)

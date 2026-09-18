@@ -66,7 +66,14 @@ def cleanup_cache(self):
 			name = "app.workers.tasks.refresh_news")
 def refresh_news(self):
 	logger.info("Refreshing news...")
-	task_id = self.request.id 
-	result = {"status": "NOT_IMPLEMENTED"}
-	_record_history("refresh_news", task_id, "NOT_IMPLEMENTED", result)
+	db = SessionLocal()
+	task_id = self.request.id
+	try:
+		result = NewsService().refresh_news(db)
+	except Exception as e:
+		_record_history("refresh_news", task_id, "FAILURE", {"error": str(e)})
+		raise
+	finally:
+		db.close()
+	_record_history("refresh_news", task_id, "SUCCESS", result)
 	return result

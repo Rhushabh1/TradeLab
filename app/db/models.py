@@ -50,3 +50,15 @@ class Transaction(Base):
 	price: Mapped[float]
 	create_at: Mapped[datetime] = mapped_column(DateTime,
 												server_default = func.now())
+
+
+class News(Base):
+	__tablename__ = "news"
+	id: Mapped[int] = mapped_column(primary_key = True)
+	ticker: Mapped[str] = mapped_column(String(20))
+	title: Mapped[str] = mapped_column(String(500))
+	publisher: Mapped[str] = mapped_column(String(100))
+	link: Mapped[str] = mapped_column(String(1000))
+	published_at: Mapped[datetime] = mapped_column(DateTime,
+													server_default = func.now())
+	# not storing summaries/embeddings yet
