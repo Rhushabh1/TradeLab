@@ -48,7 +48,9 @@ python -m pytest -vs tests/test_health.py
 - scheduler health
 - execution history
 
-- no distributed locking, retries, persistent jobs, job priorities, failure recovery, DLQs, etc. like I did in TaskForge
+- no distributed locking, persistent jobs, job priorities, failure recovery, DLQs, etc. like I did in TaskForge
+- celery does -> automatic retries
+- redis + celery is sufficient if producer & consumer are part of same app (kafka only useful if events shared between independent services)
 
 
 ## Testing

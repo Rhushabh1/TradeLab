@@ -1,17 +1,34 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.scheduler.jobs import (refresh_stock_cache, refresh_news, cleanup_cache)
+from app.workers.tasks import (refresh_stock_cache, refresh_news, cleanup_cache)
 
-
-# scheduler -> calls function
-# TODO - scheduler -> celery -> worker
 
 # APScheduler is lightweight and easy to manage but if horizontally scale
 # each instance would execute the same scheduled jobs, leading to duplicates
 # need to move scheduling to a dedicated scheduler (celery beat/kubernetes cron job)
 scheduler = BackgroundScheduler()
 
-# using both interval & cron jobs
-scheduler.add_job(refresh_stock_cache, "interval", minutes = 30)
-scheduler.add_job(refresh_news, "interval", hours = 1)
-scheduler.add_job(cleanup_cache, "cron", hour = 0)
+# scheduler no longer executes work -> it dispatches work to celery
+# .delay is a shorcut to send it to task manager
+# runs every 30 minutes
+scheduler.add_job(func = refresh_stock_cache.delay, 
+				trigger = "interval",
+				minutes = 5, 
+				id = "refresh_stock_cache",
+				name = "Refresh stock prices and cache",
+				replace_existing = True,
+				coalesce = True,
+				misfire_grace_time = 3600)
+
+# runs every night at midnight 12AM
+scheduler.add_job(func = cleanup_cache.delay, 
+				trigger = "cron", 
+				hour = 0,
+				minute = 0,
+				id = "cleanup_cache",
+				name = "Clean up stock cache",
+				replace_existing = True,
+				coalesce = True,
+				misfire_grace_time = 3600)
+
+# TODO - add news ingestion too

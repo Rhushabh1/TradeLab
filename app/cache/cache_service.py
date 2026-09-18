@@ -24,7 +24,15 @@ class CacheService:
 		client.setex(key, ttl, json.dumps(value))
 
 	def delete(self, key: str):
-		client.delete(key)
+		return client.delete(key)
+
+	# removes matching cache entries that have no expiration
+	def cleanup_keys_without_ttl(self, pattern: str = "stock:*") -> int:
+		deleted = 0
+		for key in client.scan_iter(match = pattern, count = 500):
+			if client.ttl(key) == -1:
+				deleted += client.delete(key)
+		return deleted
 
 
 cache = CacheService()

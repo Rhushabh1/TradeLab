@@ -1,12 +1,10 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
+# APScheduler jobs have only these useful fields
 class JobResponse(BaseModel):
-	# construct response schema from object's attributes, rather than a dictionary
-	model_config = ConfigDict(from_attributes = True)
-
-	id: int
+	id: str
 	name: str
-	status: str
-	created_at: datetime
+	trigger: str
+	next_run_time: datetime | None = None
