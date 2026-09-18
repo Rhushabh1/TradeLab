@@ -9,6 +9,7 @@ from app.core.middleware import RequestMiddleware
 from app.core.exceptions import (TradeLabException,
 								tradelab_exception_handler,
 								generic_exception_handler)
+from app.api.auth import router as auth_router
 
 
 # FastAPI now recommends lifespan mechanism (instead of on_event())
@@ -38,6 +39,7 @@ app = FastAPI(title = settings.APP_NAME,
 # routed health APIs here
 app.include_router(health_router)
 app.include_router(db_router)
+app.include_router(auth_router)
 
 # register middleware
 app.add_middleware(RequestMiddleware)

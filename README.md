@@ -54,7 +54,7 @@ every endpoint must automatically get -> logging, error handling, request ID, ti
 - post /login
 - userservice
 - admin/me endpoint
-
+- no RBAC, OAuth, refresh token, etc. (simple and tiny)
 
 ## Testing
 
@@ -126,7 +126,28 @@ $> docker exec -it tradelab-api-1 alembic history
 basic flow is :
 sqlalchemy models -> alembic revision --autogenerate -> alembic/versions/<migration>.py -> alembic upgrade head -> postgresql tables
 
-shutting down then restart docker image
-$> docker compose down
-$> docker compose build --no-cache api
-$> docker compose up
+
+Docker Commands
+(main start) start image, creating missing containers if needed
+$> docker compose up -d
+
+(main stop) stop docker container without deleting db volume
+$> docker compose stop
+
+check status
+$> docker compose ps
+
+inspect errors
+$> docker compose logs -f api
+
+rebuild api only
+$> docker compose build api
+
+start existing image
+$> docker compose start
+
+after dockerfile/dependencies changes
+$> docker compose up -d --build api
+
+$> forces a fresh build (avoid for routine iterations)
+docker compose build --no-cache api
