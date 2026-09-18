@@ -17,6 +17,7 @@ from app.scheduler.scheduler import scheduler
 from app.api.scheduler import router as scheduler_router
 from app.api.worker import router as worker_router
 from app.api.news import router as news_router
+from app.api.rag import router as rag_router
 
 
 # FastAPI now recommends lifespan mechanism (instead of on_event())
@@ -59,6 +60,7 @@ app.include_router(portfolio_router)
 app.include_router(scheduler_router)
 app.include_router(worker_router)
 app.include_router(news_router)
+app.include_router(rag_router)
 
 # register middleware
 app.add_middleware(RequestMiddleware)

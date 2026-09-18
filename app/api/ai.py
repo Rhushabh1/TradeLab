@@ -20,3 +20,8 @@ def chat(body: dict):
 			"request_id": request_id,
 			"status": "QUEUED"
 			}
+
+
+@router.get("/{id}")
+def ai_fetch():
+	pass

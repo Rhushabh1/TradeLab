@@ -1,0 +1,5 @@
+NVIDIA develops GPUs, AI accelerators, networking solutions and software for gaming, data centers, autonomous vehicles and professional computing.
+
+Its largest business is the Data Center segment, driven by demand for AI training, inference and accelerated computing infrastructure.
+
+Major competitors include AMD, Intel and specialized AI chip developers.

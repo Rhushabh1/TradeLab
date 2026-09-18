@@ -45,8 +45,6 @@ python -m pytest -vs tests/test_health.py
 - scheduler health
 - execution history
 
-- news ingestion
-- rag + ai chat + openai
 - backtesting engine
 - technical indicators
 - strategy builder
@@ -54,6 +52,9 @@ python -m pytest -vs tests/test_health.py
 - prompt evaluation
 - observability - prometheus
 - updated pytest suite for everything
+
+- not using langchain because pipeline is just a few steps - embeddings, vector search, prompt construction (langchain is useful for complex workflows)
+- no chunking, filtering, hybrid search, cross encoder, recursive retrieval
 
 ## Testing
 

@@ -62,3 +62,20 @@ class News(Base):
 	published_at: Mapped[datetime] = mapped_column(DateTime,
 													server_default = func.now())
 	# not storing summaries/embeddings yet
+
+
+# TODO - add enum status = {QUEUED, PROCESSING COMPLETED, FAILED}
+class AIRequest(Base):
+	__tablename__ = "ai_requests"
+	id: 
+	question: 
+	answer: 
+	status: 
+
+
+class UserNotes(Base):
+	__tablename__ = "notes"
+	id: 
+	user_id: 
+	ticker: 
+	content: 
