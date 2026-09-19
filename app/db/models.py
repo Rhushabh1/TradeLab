@@ -67,10 +67,11 @@ class News(Base):
 # TODO - add enum status = {QUEUED, PROCESSING COMPLETED, FAILED}
 class AIRequest(Base):
 	__tablename__ = "ai_requests"
-	id: 
-	question: 
-	answer: 
-	status: 
+	id: Mapped[str] = mapped_column(String(50), 
+									primary_key = True)
+	question: Mapped[str]
+	answer: Mapped[str | None]
+	status: Mapped[str]
 
 
 class UserNotes(Base):
