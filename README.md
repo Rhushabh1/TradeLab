@@ -41,14 +41,11 @@ python -m pytest -vs tests/test_health.py
 
 ## TODO
 
-- job registry
 - scheduler health
-- execution history
 
 - backtesting engine
 - technical indicators
 - strategy builder
-- ai explanation of backtest results 
 - prompt evaluation
 - observability - prometheus
 - updated pytest suite for everything
@@ -162,3 +159,7 @@ Authorization: Bearer + token
 HTTPBearer extracts token
 jwt.decode() validates token
 payload["sub"] returns email
+
+
+to run postgreSQL queries directly from cmd
+$> docker compose exec db psql -U postgres -d tradelab -c "SELECT id, user_id, ticker FROM watchlist ORDER BY id;"

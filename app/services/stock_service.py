@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.logger import logger
 from app.cache.cache_service import cache 
-from app.db.models import Stock
+from app.db.models import Stock, Watchlist
 from app.core.exceptions import TradeLabException
 
 
@@ -76,6 +76,7 @@ class StockService:
 			stock.current_price = data["current_price"]
 		try:
 			db.commit()
+			db.refresh(stock)
 		except Exception:
 			db.rollback()
 			raise 
@@ -84,25 +85,36 @@ class StockService:
 		return data
 
 
+	# unique tickers watched by atleast 1 user (only those are of concern to us)
+	def tracked_tickers(self, db: Session):
+		tickers = (db.query(Watchlist.ticker)
+					.distinct()
+					.order_by(Watchlist.ticker.asc())
+					.all())
+		return [t[0] for t in tickers]
+
+
 	# refresh prices for all stocks already stored in db
-	# TODO - add a watchlist feature to update stock prices
 	def refresh_stock_prices(self, db: Session) -> dict:
-		stocks = db.query(Stock).all()
+		# improved query
+		stocks = (db.query(Stock)
+					.join(Watchlist, 
+						Watchlist.ticker == Stock.ticker)
+					.distinct()
+					.all())
 		updated_data = []
 		failed_tickers = []
 
 		for stock in stocks:
-			ticker = stock.ticker.upper()
 			try:
-				data = self._fetch_market_data(ticker)
+				data = self._fetch_market_data(stock.ticker)
+				stock.name = data["name"]
+				stock.sector = data["sector"]
+				stock.current_price = data["current_price"]
+				updated_data.append(data)
 			except Exception as e:
 				logger.exception(f"Failed to refresh price for {ticker}")
 				failed_tickers.append(ticker)
-				continue
-			stock.name = data["name"]
-			stock.sector = data["sector"]
-			stock.current_price = data["current_price"]
-			updated_data.append(data)
 		try:
 			db.commit()
 		except Exception:
@@ -114,12 +126,6 @@ class StockService:
 		return {
 				"updated": len(updated_data),
 				"failed": len(failed_tickers),
+				"updated_tickers": [data["ticker"] for data in updated_data],
 				"failed_tickers": failed_tickers
 				}
-
-
-	# return list of all tracked stocks
-	def tracked_tickers(self, db: Session) -> list:
-		return (db.query(Stock.ticker).
-				.distinct()
-				.all())

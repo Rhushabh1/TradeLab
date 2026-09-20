@@ -2,11 +2,12 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
-class NewsResponse(BaseModel):
+class WatchlistCreate(BaseModel):
+	ticker: str
+
+
+class WatchlistResponse(BaseModel):
 	model_config = ConfigDict(from_attributes = True)
 
 	ticker: str
-	title: str
-	publisher: str
-	link: str
-	published_at: datetime
+	# company profile available?

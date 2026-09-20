@@ -9,8 +9,6 @@ class Settings(BaseSettings):
 	DEBUG : bool = True
 	HOST : str = "0.0.0.0"
 	PORT : int = 8000
-	# new pydantic v3 style
-	model_config = SettingsConfigDict(env_file = ".env")
 
 	DATABASE_URL: str
 
@@ -19,6 +17,20 @@ class Settings(BaseSettings):
 	TOKEN_EXPIRE_MINUTES : int = 60
 
 	REDIS_URL : str
+
+	# openai & kafka config
+	OPENAI_API_KEY : str | None = None
+	OPENAI_MODEL : str = "gpt-4o-mini"
+	KAFKA_BOOTSTRAP_SERVERS : str = "kafka:9092"
+	KAFKA_AI_TOPIC : str = "ai.requests"
+	KAFKA_AI_GROUP_ID : str = "tradelab-ai-worker"
+
+	COMPANY_PROFILE_DIR : str = "data/company_profiles"
+	RAG_TOP_K : int = 5
+	MODEL_NAME : str = "all-MiniLM-L6-v2"
+
+	model_config = SettingsConfigDict(env_file = ".env",
+										env_file_encoding = "utf-8")
 
 
 settings = Settings()

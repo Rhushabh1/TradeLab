@@ -5,13 +5,13 @@ from app.logger import logger
 from app.db.models import News
 from app.cache.cache_service import cache
 from app.services.stock_service import StockService
-from app.core.exception import TradeLabException
+from app.services.watchlist_service import WatchlistService
+from app.core.exceptions import TradeLabException
 
 
 NEWS_CACHE_TTL_SECONDS = 600
 MAX_NEWS_ARTICLES = 10
 
-# TODO - add caching (use cache_service)
 # cache -> db -> yfinance
 class NewsService:
 	@staticmethod
@@ -20,24 +20,32 @@ class NewsService:
 				"ticker": news.ticker,
 				"title": news.title,
 				"publisher": news.publisher,
-				"link": news.link
+				"link": news.link,
+				"published_at": news.published_at
 				}
 
+	# strips data from the article
 	@staticmethod
 	def _extract_article_data(article: dict):
-		content = article.get("content", article)
-		link = content.get("canonicalUrl", {}).get("url") or content.get("link")
-		if not link:
+		# need to take care of all the possible article formats
+		content = article.get("content", article) or {}
+		link = content.get("canonicalUrl", {}).get("url") or content.get("link") or article.get("link")
+		title = content.get("title") or article.get("title")
+		if not link or not title:
 			return None
+		provider = content.gte("provider") or {}
+		publisher = provider.get("displayName") or content.get("publisher") or article.get("publisher") or "Unknown"
+		# need to limit the strings for db constraints
 		return {
-				"title": content.get("title", ""), 
-				"publisher": content.get("provider", {}).get("displayName") or content.get("publisher", ""),
-				"link": link
+				"title": str(title)[:500], 
+				"publisher": str(publisher)[:100],
+				"link": str(link)[:1000]
 				}
 
 	# fetches directly from yfinance -> db -> cache
 	def fetch_news(self, db: Session, ticker: str):
 		ticker = ticker.strip().upper()
+		# tedious exception handling
 		if not ticker:
 			raise TradeLabException("Ticker is required")
 		try:
@@ -45,7 +53,8 @@ class NewsService:
 		except Exception as e:
 			logger.exception(f"Failed to fetch news for {ticker}")
 			raise TradeLabException(f"Unable to retrieve news for {ticker}") from e
-		articles = articles[:MAX_NEWS_ARTICLES]:
+		
+		articles = articles[:MAX_NEWS_ARTICLES]
 		existing_news = (db.query(News)
 						.filter(News.ticker == ticker)
 						.all())
@@ -59,7 +68,7 @@ class NewsService:
 			link = data["link"]
 			news = existing_by_link.get(link)
 			if news is None:
-				# insert new article for this ticker
+				# insert news article for this ticker
 				news = News(ticker = ticker,
 							title = data["title"],
 							publisher = data["publisher"],
@@ -87,11 +96,8 @@ class NewsService:
 		return results
 
 	# fetches from news table
-	def get_news(self, db: Session, ticker: str):
-		# standard ticker
-		ticker = ticker.strip().upper()
-		if not ticker:
-			raise TradeLabException("Ticker is required")
+	def get_news(self, db: Session, user_id: int, ticker: str):
+		ticker = WatchlistService().ticker_watched(db, user_id, ticker)
 		# (1) cache HIT
 		key = f"news:{ticker}"
 		cached = cache.get(key)
@@ -100,6 +106,8 @@ class NewsService:
 		# (2) postgreSQL HIT -> add to cache
 		news = (db.query(News)
 				.filter(News.ticker == ticker)
+				.order_by(News.published_at.desc())
+				.limit(MAX_NEWS_ARTICLES)
 				.all())
 		if news:
 			results = [self._news_to_dict(article) for article in news]
@@ -121,9 +129,9 @@ class NewsService:
 				db.rollback()
 				logger.exception(f"Failed to refresh news for {ticker}")
 				failed_tickers.append(ticker)
-				continue
 		return {
 				"updated": len(updated_tickers),
 				"failed": len(failed_tickers),
+				"updated_tickers": updated_tickers,
 				"failed_tickers": failed_tickers
 				}
